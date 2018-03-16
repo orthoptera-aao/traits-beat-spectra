@@ -102,7 +102,6 @@ function beatspectra_analyse($recording) {
       );
     } else {
       core_log("warning", "beatspectra", "Recording ".$recording["id"].": Failed to read wave file: ".serialize($output));
-      }
     }
   }
   return($return);

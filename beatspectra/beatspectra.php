@@ -83,7 +83,7 @@ function beatspectra_analyse($recording) {
       "save path" => NULL
     );
     core_log("info", "beatspectra", "Attepting to create beatspectragram for recording ".$recording["id"].".");
-    exec("Rscript modules/traits-beatspectra/beatspectra/beatspectra.R ".$recording["id"]." scratch/wav/".$recording["id"].".1kHz-highpass.wav", $output, $return_value);
+    exec("Rscript --silent modules/traits-beatspectra/beatspectra/beatspectra.R ".$recording["id"]." scratch/wav/".$recording["id"].".1kHz-highpass.wav", $output, $return_value);
     if ($return_value == 0) {
       $return[$recording["id"].".png"] = array(
         "file name" => $recording["id"].".png",

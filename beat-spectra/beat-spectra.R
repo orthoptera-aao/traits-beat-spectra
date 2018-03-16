@@ -7,6 +7,8 @@ args = commandArgs(trailingOnly=TRUE)
 recording_id <- args[1]
 filename <- args[2];
 
+folder <- "modules/traits-beat-spectra/beat-spectra/"
+
 wave <- readWave(filename)
 
 wave<-ffilter(wave, from=1000, to=wave@samp.rate/2, output="Wave")
@@ -35,34 +37,36 @@ beatSpectrum <- function(wave,
 }
 
 bs <- beatSpectrum(wave)
-write.csv(bs, file=paste0(c("modules/traits-beat-spectra/beat-spectra/",recording_id,".beat-spectrum.csv")))
 
+write.csv(bs, file=paste0(folder,recording_id,".csv"))
 
 pos_peaks <- bs[peakfind(bs$power),]
 neg_peaks_n <- peakfind(-1*bs$power, show=FALSE)
 neg_peaks <- bs[neg_peaks_n,]
 
-png(filename=paste0(c("modules/traits-beat-spectra/beat-spectra/",recording_id,".beat-spectrum.png")))
-plot(bs$period, bs$power, log="x", type="line")
-points(neg_peaks_n, bs$power[neg_peaks_n], col="green", pch=16)
+png(filename=paste0(folder,recording_id,".png"))
+plot(bs$period, bs$power, log="x", type="l")
 dev.off()
 
-max_value <- max(bs$power)
-max_pos <- which.max(bs$power)
-left <- right <- max_pos
-step <- 1
-while (left == max_pos || right == max_pos){
-  if (bs$power[[max_pos - step]] < 0.5*max_value) {
-    left <- max_pos - step
-  }
-  if (bs$power[[max_pos + step]] < 0.5*max_value) {
-    right <- max_pos + step
-  }
-  step <- step + 1
-}
 
-peak_periodicty_width <- bs$period[[right]] - bs$period[[left]]
+  max_value <- max(bs$power)
+  max_pos <- which.max(bs$power)
+  left <- right <- max_pos
+  step <- 1
+  while (left == max_pos || right == max_pos){
+    if (bs$power[[max_pos - step]] < 0.5*max_value) {
+      left <- max_pos - step
+    }
+    if (bs$power[[max_pos + step]] < 0.5*max_value) {
+      right <- max_pos + step
+    }
+    step <- step + 1
+  }
 
-data <- c(bs$period[[max_pos]], peak_periodicty_width)
-names(data) <-c("peak_periodicty", "peak_periodicty_width")
-write.csv(data, file=paste0(c("modules/traits-beat-spectra/beat-spectra/",recording_id,".largest-peak-data.csv")))
+  peak_periodicty_width <- bs$period[[right]] - bs$period[[left]]
+
+  data <- c(max_pos, bs$period[[max_pos]], peak_periodicty_width)
+  names(data) <-c("peak location", "peak_periodicty", "peak_periodicty_width")
+
+write.csv(data, file=paste0(folder,recording_id,".largest-peak-data.csv"), col.names=FALSE)
+

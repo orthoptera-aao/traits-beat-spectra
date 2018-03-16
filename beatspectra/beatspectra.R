@@ -2,6 +2,7 @@ library(data.table)
 library(WaveletComp)
 library(phonTools)
 library(seewave)
+library(tuneR)
 
 args = commandArgs(trailingOnly=TRUE)
 recording_id <- args[1]
